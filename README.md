@@ -2,7 +2,7 @@
 
 **Status:** Patched
 **GHSA ID:**[GHSA-73jv-44c3-j5p2](https://github.com/ajenti/ajenti/security/advisories/GHSA-73jv-44c3-j5p2)
-**CVE ID:** *CVE-2026-35175*
+**CVE ID:** CVE-2026-35175
 **Researcher:** Nguyen Van Thien
 
 **Severity**: 🔴 High
