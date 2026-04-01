@@ -12,7 +12,7 @@
   - A03:2025 — Software Supply Chain Failures *(attack vector: malicious PyPI package)*
 **CVSS v3.1**: `AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:L` — Score: **7.7 (High)**
 **Repository**: `ajenti/ajenti`
-**Affected Version**: v2.2.13 (latest)
+**Affected Version**: < v2.2.15
 **Affected Files**:
 - `plugins/core/views/tasks.py` — line 15 (Missing `@authorize`)
 - `plugins/plugins/tasks.py` — line 14 (No authorization in `run()`)
