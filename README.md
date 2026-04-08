@@ -1,17 +1,25 @@
 # Ajenti Panel < v2.2.15 - Authorization Bypass
 
 **Status:** Patched
+
 **GHSA ID:**[GHSA-73jv-44c3-j5p2](https://github.com/ajenti/ajenti/security/advisories/GHSA-73jv-44c3-j5p2)
+
 **CVE ID:** CVE-2026-35175
+
 **Researcher:** Nguyen Van Thien
 
 **Severity**: 🔴 High
+
 **CWE**: CWE-862 — Missing Authorization
+
 **OWASP Top 10:2025**:
   - A01:2025 — Broken Access Control *(root cause: missing @authorize)*
   - A03:2025 — Software Supply Chain Failures *(attack vector: malicious PyPI package)*
-**CVSS v3.1**: `AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:L` — Score: **7.7 (High)**
+
+**CVSS v4.0**: `AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:H/VA:L/SC:L/SI:L/SA:L` — Score: **7.2 (High)**
+
 **Repository**: `ajenti/ajenti`
+
 **Affected Version**: < v2.2.15
 **Affected Files**:
 - `plugins/core/views/tasks.py` — line 15 (Missing `@authorize`)
@@ -19,25 +27,6 @@
 
 > **Test Environment**: Ajenti running on Linux with `users` auth provider.
 > **Attacker Account**: `sinhvien` — a real OS user with uid=1001, not in sudo group, no special privileges.
-
----
-
-## Vulnerability Classification
-
-```
-Root Cause:
-  └─ POST /api/core/tasks/start is missing @authorize decorator
-  └─ Any logged-in user can call it regardless of configured permissions → CWE-862
-
-Effect:
-  └─ User bypasses admin-configured restrictions → Authorization Bypass
-  └─ terminal:scripts=false is completely ineffective  → A01:2025 Broken Access Control
-  └─ Exploited via malicious PyPI package              → A03:2025 Supply Chain Failures
-
-Consequence:
-  └─ Arbitrary code execution via pip package → Leads to Reverse Shell
-  └─ This is the IMPACT, not the vulnerability type itself
-```
 
 ---
 
@@ -58,18 +47,6 @@ how to use the Tasks API.
 `@authorize` in `run()`), an attacker can trigger pip to install a malicious package,
 resulting in arbitrary code execution and a reverse shell — even when
 `terminal:scripts: false` and `terminal:open: false` are set.
-
----
-
-## Validation
-
-- [x] Confirmed that `POST /api/core/tasks/start` returns a task ID for any authenticated user, regardless of configured permissions.
-- [x] Verified that `InstallPlugin.run()` contains no `@authorize` check (code review).
-- [x] Confirmed that pip is invoked with a `spec` argument fully controlled by the attacker.
-- [x] Successfully uploaded package `ajenti-plugin-nvt-poc==1.0.0` to TestPyPI.
-- [x] Triggered `InstallPlugin` → pip downloaded the package from `test.pypi.org` → `setup.py` executed.
-- [x] Received a **reverse shell** as `uid=1001(sinhvien)` despite `terminal:scripts: false` and `terminal:open: false`.
-- [x] **Authorization Bypass fully confirmed.**
 
 ---
 
